@@ -36,7 +36,9 @@
 <tbody>
   <% @movies.each do |movie| %>
     <tr class="movie">
-      <td><%= movie.title %></td>
+      <td>
+        <span class="movie"><%= movie.title %></span>
+      </td>
       <td><%= movie.rating %></td>
       <td><%= movie.release_date %></td>
       <td><%= link_to "More about #{movie.title}", movie_path(movie) %></td>
