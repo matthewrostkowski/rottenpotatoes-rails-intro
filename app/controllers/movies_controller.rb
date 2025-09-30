@@ -5,15 +5,26 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings     = Movie.all_ratings
-    @ratings_to_show = params[:ratings]&.keys || @all_ratings
+    chosen_ratings = params[:ratings]&.keys
+    chosen_sort = params[:sort_by]
+    if chosen_ratings.blank? && chosen_sort.blank? && (session[:ratings].present? || session[:sort_by].present?)
+        redirect_to movies_path(
+      ratings: (session[:ratings] || @all_ratings).index_with { '1' },
+      sort_by: session[:sort_by]
+        ) and return
+    end
 
-    # Only allow safe sort keys we expect
-    allowed_sorts = %w[title release_date]
-    @sort_by = allowed_sorts.include?(params[:sort_by]) ? params[:sort_by] : nil
+  @ratings_to_show = chosen_ratings.presence || @all_ratings
+  @sort_by         = %w[title release_date].include?(chosen_sort) ? chosen_sort : nil
 
-    scope = Movie.with_ratings(@ratings_to_show)
-    @movies = @sort_by ? scope.order(@sort_by) : scope
+  session[:ratings] = @ratings_to_show
+  session[:sort_by] = @sort_by
+
+  @movies = Movie.with_ratings(@ratings_to_show)
+  @movies = @movies.order(@sort_by) if @sort_by.present?
+
   end
+
 
   def new; end
 
@@ -24,12 +35,12 @@ class MoviesController < ApplicationController
   end
 
   def edit
-    @movie = Movie.find params[:id]
+    @movie = Movie.find(params[:id])
   end
 
   def update
-    @movie = Movie.find params[:id]
-    @movie.update_attributes!(movie_params)
+    @movie = Movie.find(params[:id])
+    @movie.update!(movie_params)
     flash[:notice] = "#{@movie.title} was successfully updated."
     redirect_to movie_path(@movie)
   end
