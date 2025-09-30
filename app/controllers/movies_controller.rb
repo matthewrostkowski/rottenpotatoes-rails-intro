@@ -5,8 +5,14 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings     = Movie.all_ratings
-    @ratings_to_show = (params[:ratings]&.keys.presence) || @all_ratings
-    @movies          = Movie.with_ratings(@ratings_to_show)
+    @ratings_to_show = params[:ratings]&.keys || @all_ratings
+
+    # Only allow safe sort keys we expect
+    allowed_sorts = %w[title release_date]
+    @sort_by = allowed_sorts.include?(params[:sort_by]) ? params[:sort_by] : nil
+
+    scope = Movie.with_ratings(@ratings_to_show)
+    @movies = @sort_by ? scope.order(@sort_by) : scope
   end
 
   def new; end
@@ -18,12 +24,12 @@ class MoviesController < ApplicationController
   end
 
   def edit
-    @movie = Movie.find(params[:id])
+    @movie = Movie.find params[:id]
   end
 
   def update
-    @movie = Movie.find(params[:id])
-    @movie.update!(movie_params)
+    @movie = Movie.find params[:id]
+    @movie.update_attributes!(movie_params)
     flash[:notice] = "#{@movie.title} was successfully updated."
     redirect_to movie_path(@movie)
   end
