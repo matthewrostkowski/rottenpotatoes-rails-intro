@@ -14,37 +14,21 @@
   <div class="mt-2">
     <label class="form-label me-2" for="sort_by">Sort by:</label>
     <%= select_tag :sort_by,
-                   options_for_select([["Title","title"],["Release date","release_date"]], @sort_by),
+                   options_for_select([['Title','title'],['Release date','release_date']], @sort_by),
                    id: "sort_by",
                    class: "form-select d-inline w-auto" %>
   </div>
 
-  <%= submit_tag "Refresh", id: "ratings_submit", class: "btn btn-primary mt-2" %>
+  <%= submit_tag 'Refresh', id: 'ratings_submit', class: 'btn btn-primary mt-2' %>
 <% end %>
 
-<table class="table table-striped col-md-12" id="movies">
-  <thead>
-    <tr>
-      <th>Movie Title</th>
-      <th>Rating</th>
-      <th>Release Date</th>
-      <th>More Info</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @movies.each do |movie| %>
-      <tr class="movie">
-        <td>
-          <!-- hidden marker for autograder that looks for div.movie -->
-          <div class="movie" aria-hidden="true" style="display:none"></div>
-          <%= movie.title %>
-        </td>
-        <td><%= movie.rating %></td>
-        <td><%= movie.release_date %></td>
-        <td><%= link_to "More about #{movie.title}", movie_path(movie) %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div id="movies">
+  <% @movies.each do |movie| %>
+    <div class="movie">
+      <strong><%= movie.title %></strong> — <%= movie.rating %> — <%= movie.release_date %>
+      <%= link_to "More about #{movie.title}", movie_path(movie) %>
+    </div>
+  <% end %>
+</div>
 
 <%= link_to 'Add new movie', new_movie_path, class: 'btn btn-primary' %>
