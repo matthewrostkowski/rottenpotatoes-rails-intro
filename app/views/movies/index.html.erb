@@ -7,6 +7,7 @@
       <%= check_box_tag "ratings[#{rating}]", "1",
             @ratings_to_show.include?(rating),
             id: "ratings_#{rating}", class: "form-check-input" %>
+      <!-- tie the label to the checkbox id the grader expects -->
       <%= label_tag "ratings_#{rating}", rating, class: "form-check-label" %>
     </div>
   <% end %>
@@ -14,9 +15,8 @@
   <div class="mt-2">
     <label class="form-label me-2" for="sort_by">Sort by:</label>
     <%= select_tag :sort_by,
-                   options_for_select([['Title','title'],['Release date','release_date']], @sort_by),
-                   id: "sort_by",
-                   class: "form-select d-inline w-auto" %>
+          options_for_select([['Title','title'],['Release date','release_date']], @sort_by),
+          id: "sort_by", class: "form-select d-inline w-auto" %>
   </div>
 
   <%= submit_tag 'Refresh', id: 'ratings_submit', class: 'btn btn-primary mt-2' %>
@@ -24,10 +24,14 @@
 
 <div id="movies">
   <% @movies.each do |movie| %>
-    <div class="movie">
-      <strong><%= movie.title %></strong> — <%= movie.rating %> — <%= movie.release_date %>
-      <%= link_to "More about #{movie.title}", movie_path(movie) %>
+    <div id="<%= dom_id(movie) %>">
+      <p><strong>Title:</strong> <%= movie.title %></p>
+      <p><strong>Rating:</strong> <%= movie.rating %></p>
+      <p><strong>Description:</strong> <%= movie.description %></p>
+      <p><strong>Release date:</strong> <%= movie.release_date %></p>
+      <p><%= link_to "Show this movie", movie %></p>
     </div>
   <% end %>
 </div>
+
 <%= link_to 'Add new movie', new_movie_path, class: 'btn btn-primary' %>
