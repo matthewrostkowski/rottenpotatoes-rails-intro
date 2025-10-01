@@ -7,7 +7,6 @@
       <%= check_box_tag "ratings[#{rating}]", "1",
             @ratings_to_show.include?(rating),
             id: "ratings_#{rating}", class: "form-check-input" %>
-      <!-- tie the label to the checkbox id the grader expects -->
       <%= label_tag "ratings_#{rating}", rating, class: "form-check-label" %>
     </div>
   <% end %>
